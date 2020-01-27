@@ -11,14 +11,14 @@ import java.util.HashMap;
 
 class Main {
     public static void main(String[] args) throws Exception {
-        Path filePath = Paths.get(args[0]);
+        Path filePath = Paths.get(String.format("EP/resources/%s", args[0]));
         // int metodo = Integer.parseInt(args[1]); 
         String fileString = "";
         try {
             fileString = new String(Files.readAllBytes(filePath));
         } catch (IOException e) {
             System.err.println(e);
-            throw new Exception("There was a problem reading the file");
+            throw new Exception(e);
         }
 
         String[] inputLines = fileString.split("\n");
@@ -49,7 +49,6 @@ class Main {
         int endOfMaze = Integer.parseInt(mazeInfo.get("rows")) + 2;
         
         Item[] items = makeItems(nOfItems, endOfMaze, inputLines);
-        
         
     }
 
