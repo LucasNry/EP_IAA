@@ -1,3 +1,6 @@
+package EP;
+
+import EP.structures.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,7 +10,7 @@ import java.util.HashMap;
 
 
 class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Path filePath = Paths.get(args[0]);
         // int metodo = Integer.parseInt(args[1]); 
         String fileString = "";
@@ -15,6 +18,7 @@ class Main {
             fileString = new String(Files.readAllBytes(filePath));
         } catch (IOException e) {
             System.err.println(e);
+            throw new Exception("There was a problem reading the file");
         }
 
         String[] inputLines = fileString.split("\n");

@@ -1,5 +1,7 @@
-class Item {
-    int row, col, value, weight;
+package EP.structures;
+
+public class Item {
+    public int row, col, value, weight;
 
     public Item (int row, int col, int value, int weight) {
         this.row = row;
