@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 
 
-class Main {
+public class Main {
     public static void main(String[] args) throws Exception {
         Path filePath = Paths.get(String.format("EP/resources/%s", args[0]));
         // int metodo = Integer.parseInt(args[1]); 
@@ -30,11 +29,13 @@ class Main {
 
         String[] rawMaze = Arrays.copyOfRange(inputLines, 1, Integer.parseInt(mazeInfo.get("rows")) + 1);
 
-        Boolean[][] navMaze = makeNavigableMaze(
-            rawMaze,
-            Integer.parseInt(mazeInfo.get("rows")),
-            Integer.parseInt(mazeInfo.get("cols"))
-        );
+        // Boolean[][] navMaze = makeNavigableMaze(
+        //     rawMaze,
+        //     Integer.parseInt(mazeInfo.get("rows")),
+        //     Integer.parseInt(mazeInfo.get("cols"))
+        // );
+
+        Graph maze = this.makeMaze();
 
 
         HashMap<String, Integer> startingCoordinates = new HashMap<>();
@@ -65,29 +66,13 @@ class Main {
         
     }
     
-    private static Boolean[][] makeNavigableMaze (String[] rawMaze, int rows, int cols) {
-        Boolean[][] navMaze = new Boolean[rows][cols];
+    private static Graph makeMaze (String[] rawMaze, int rows, int cols) {
+        Graph navMaze = new Graph(rows * cols);
+        // WIP
 
-        for (int i = 0; i < rows; i++) {
-            String[] colItems = rawMaze[i].split("");
-            for (int j = 0; j < cols; j++) {
-                if (colItems[j].equals(".")) navMaze[i][j] = true;
-                else navMaze[i][j] = false;
-            }
-        }
+        
         
         return navMaze;
-    }
-    
-    private static < E > int indexOf(E element, E[] array){
-        E[] temp = Arrays.copyOf(array, (array.length + 1));
-        temp[array.length] = element;
-
-        int i = 0;
-        while(!temp[i].equals(element)) i++;
-
-        if (i != array.length) return i;
-        else return -1;
     }
 
     public static Item fetchItem(int row, int col, Item[] items) {
