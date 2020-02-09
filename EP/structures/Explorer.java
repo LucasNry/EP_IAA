@@ -1,24 +1,36 @@
 package EP.structures;
 
-import java.util.HashMap;
+import EP.structures.Vertice;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.lang.Math;
 
 public class Explorer {
+    public LinkedList<Vertice> Path;
+    public LinkedList<Item> items;
+    public int weight, value, nOfItems;
+    public float time;
 
-    HashMap<String, Integer> start, end, position;
-    int weight, value;
-
-    public Explorer (HashMap<String, Integer> start, HashMap<String, Integer> end) {
-        this.start = start;
-        this.end = end;
-        this.position = start;
+    public Explorer () {
         this.weight = 0;
         this.value = 0;
-
+        this.time = 0;
+        this.Path = new LinkedList<Vertice>();
+        this.items = new LinkedList<Item>();
     }
 
-    public void Move(int row, int col) {
-        this.position.put("row", this.position.get("row") + row);
-        this.position.put("col", this.position.get("col") + row);
+    public void addTime() {
+        this.time += Math.pow(1 + (this.weight / 10), 2);
+    }
+
+    public void collectItems(LinkedList<Item> items) {
+        ListIterator<Item> listIter = items.listIterator();
+        while(listIter.hasNext()) {
+            Item i = listIter.next();
+            this.value += i.value;
+            this.weight += i.weight;
+            this.items.add(i);
+        }
     }
 
 }

@@ -4,8 +4,11 @@ import EP.structures.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 
 public class Main {
@@ -21,39 +24,40 @@ public class Main {
         }
 
         String[] inputLines = fileString.split("\n");
+        
         HashMap<String, String> mazeInfo = new HashMap<>();
-
+        
         String[] rowsAndCols = inputLines[0].split(" ");
         mazeInfo.put("rows", rowsAndCols[0].toString());
         mazeInfo.put("cols", rowsAndCols[1].toString());
-
+        
+        int nOfItems = Integer.parseInt(inputLines[Integer.parseInt(mazeInfo.get("rows")) + 1]);
+        int endOfMaze = Integer.parseInt(mazeInfo.get("rows")) + 2;
         String[] rawMaze = Arrays.copyOfRange(inputLines, 1, Integer.parseInt(mazeInfo.get("rows")) + 1);
 
-        // Boolean[][] navMaze = makeNavigableMaze(
-        //     rawMaze,
-        //     Integer.parseInt(mazeInfo.get("rows")),
-        //     Integer.parseInt(mazeInfo.get("cols"))
-        // );
+        String[][] formattedRawMaze = formatMaze(rawMaze, Integer.parseInt(mazeInfo.get("rows")), Integer.parseInt(mazeInfo.get("cols")));
+        
+        Item[] items = makeItems(nOfItems, endOfMaze, inputLines);
 
-        Graph maze = this.makeMaze();
-
+        Graph maze = makeMaze(formattedRawMaze, Integer.parseInt(mazeInfo.get("rows")), Integer.parseInt(mazeInfo.get("cols")), items);
+        maze.setConnections(formattedRawMaze);
 
         HashMap<String, Integer> startingCoordinates = new HashMap<>();
-
         HashMap<String, Integer> endingCoordinates = new HashMap<>();
 
         setCoordinates(startingCoordinates, endingCoordinates, inputLines);
 
-        int nOfItems = Integer.parseInt(inputLines[Integer.parseInt(mazeInfo.get("rows")) + 1]);
+        // maze.printConnections();
 
-        
-        int endOfMaze = Integer.parseInt(mazeInfo.get("rows")) + 2;
-        
-        Item[] items = makeItems(nOfItems, endOfMaze, inputLines);
+        Explorer explorer = new Explorer();
+
+        maze.findPath(startingCoordinates, endingCoordinates, explorer);
+
+        printResults(explorer);
         
     }
 
-    private static Item[] makeItems(int nOfItems, int endOfMaze, String[] inputLines) {
+    public static Item[] makeItems(int nOfItems, int endOfMaze, String[] inputLines) {
         Item[] items = new Item[nOfItems];
 
         for (int i = 0; i < nOfItems; i++) {
@@ -63,24 +67,20 @@ public class Main {
         }
 
         return items;
-        
     }
     
-    private static Graph makeMaze (String[] rawMaze, int rows, int cols) {
-        Graph navMaze = new Graph(rows * cols);
-        // WIP
-
-        
+    public static Graph makeMaze (String[][] Maze, int rows, int cols, Item[] items) {
+        Graph navMaze = new Graph();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Vertice v = new Vertice(i, j, Maze[i][j], items);
+                navMaze.insert(i, j, v);
+                navMaze.fetch(i, j);
+                navMaze.connections.put(v, new LinkedList<Vertice>());
+            }
+        }
         
         return navMaze;
-    }
-
-    public static Item fetchItem(int row, int col, Item[] items) {
-        for (Item item : items) {
-            if(item.row == row && item.col == col) return item;
-        }
-
-        return null;
     }
 
     private static void setCoordinates (
@@ -95,5 +95,35 @@ public class Main {
         endingCoordinates.put("row", Integer.parseInt(inputLines[inputLines.length - 1].split(" ")[0]));
 
         endingCoordinates.put("col", Integer.parseInt(inputLines[inputLines.length - 1].split(" ")[1]));
+    }
+
+    private static String[][] formatMaze (String[] rawMaze, int rows, int cols) {
+        String[][] formattedMaze = new String[rows][cols];
+        for (int i = 0; i < rawMaze.length; i++) {
+            String[] elements = rawMaze[i].split("");
+            for (int j = 0; j < cols; j++) {
+                formattedMaze[i][j] = elements[j];
+            }
+        }
+
+        return formattedMaze;
+    }
+
+    public static void printResults(Explorer explorer) {
+        System.out.printf("%d %f\n", explorer.Path.size(), explorer.time);
+
+        ListIterator<Vertice> pList = explorer.Path.listIterator();
+        while(pList.hasNext()) {
+            Vertice v = pList.next();
+            System.out.printf("%d %d\n", v.row, v.col);
+        }
+
+        System.out.printf("%d %d %d\n", explorer.items.size(), explorer.value, explorer.weight);
+
+        ListIterator<Item> iList = explorer.items.listIterator();
+        while(iList.hasNext()) {
+            Item i = iList.next();
+            System.out.printf("%d %d\n", i.row, i.col);
+        }
     }
 }

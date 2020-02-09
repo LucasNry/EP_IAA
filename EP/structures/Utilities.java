@@ -9,7 +9,6 @@ public class Utilities {
         } else {
             E[] temp = Arrays.copyOf(array, array.length + 1);
             temp[array.length] = element;
-            array = temp;
         }
     }
 
