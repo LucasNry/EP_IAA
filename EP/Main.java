@@ -14,7 +14,7 @@ import java.util.ListIterator;
 public class Main {
     public static void main(String[] args) throws Exception {
         Path filePath = Paths.get(String.format("EP/resources/%s", args[0]));
-        // int metodo = Integer.parseInt(args[1]); 
+        int method = Integer.parseInt(args[1]); 
         String fileString = "";
         try {
             fileString = new String(Files.readAllBytes(filePath));
@@ -47,11 +47,39 @@ public class Main {
 
         setCoordinates(startingCoordinates, endingCoordinates, inputLines);
 
-        // maze.printConnections();
-
         Explorer explorer = new Explorer();
 
-        maze.findPath(startingCoordinates, endingCoordinates, explorer);
+        switch (method) {
+            case 1:
+                maze.findMinPath(startingCoordinates, endingCoordinates, explorer);        
+                break;
+            case 2:
+                maze.findMaxPath(startingCoordinates, endingCoordinates, explorer);
+                break;
+            case 3:
+                maze.findMostValPath(startingCoordinates, endingCoordinates, explorer, items);
+                break;
+            default:
+                System.out.println("Please input a search method after the maze filename");;
+            }
+        HashMap<String, Integer> itemCord1 = new HashMap<String, Integer>() {{
+            put("row", 4);
+            put("col", 0);
+        }};
+        HashMap<String, Integer> itemCord2 = new HashMap<String, Integer>() {{
+            put("row", 3);
+            put("col", 2);
+        }};
+        HashMap<String, Integer> itemCord3 = new HashMap<String, Integer>() {{
+            put("row", 2);
+            put("col", 0);
+        }};
+        // maze.findMinPath(startingCoordinates, itemCord1, explorer);
+        // maze.findMinPath(itemCord1, itemCord2, explorer);
+        // maze.findMinPath(itemCord2, itemCord3, explorer);
+        // maze.findMinPath(itemCord3, endingCoordinates, explorer);
+        // maze.findMaxPath(startingCoordinates, endingCoordinates, explorer);
+        // maze.findMostValPath(startingCoordinates, endingCoordinates, explorer, items);
 
         printResults(explorer);
         
@@ -110,7 +138,7 @@ public class Main {
     }
 
     public static void printResults(Explorer explorer) {
-        System.out.printf("%d %f\n", explorer.Path.size(), explorer.time);
+        System.out.printf("%d %.2f\n", explorer.Path.size(), explorer.time);
 
         ListIterator<Vertice> pList = explorer.Path.listIterator();
         while(pList.hasNext()) {
@@ -118,7 +146,7 @@ public class Main {
             System.out.printf("%d %d\n", v.row, v.col);
         }
 
-        System.out.printf("%d %d %d\n", explorer.items.size(), explorer.value, explorer.weight);
+        System.out.printf("%d %.0f %.0f\n", explorer.items.size(), explorer.value, explorer.weight);
 
         ListIterator<Item> iList = explorer.items.listIterator();
         while(iList.hasNext()) {

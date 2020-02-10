@@ -9,7 +9,7 @@
             "name": "Debug (Launch) - Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": "mapa1.txt"
+            "args": "mapa1.txt 1"
         },
         {
             "type": "java",
@@ -17,7 +17,7 @@
             "request": "launch",
             "mainClass": "Main",
             "projectName": "EP REC_29d0a76",
-            "args": "mapa1.txt"
+            "args": "mapa1.txt 1"
         }
     ]
 }

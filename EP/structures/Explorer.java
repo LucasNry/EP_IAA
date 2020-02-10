@@ -3,13 +3,12 @@ package EP.structures;
 import EP.structures.Vertice;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.lang.Math;
 
 public class Explorer {
     public LinkedList<Vertice> Path;
     public LinkedList<Item> items;
-    public int weight, value, nOfItems;
-    public float time;
+    public float weight, value, nOfItems;
+    public double time;
 
     public Explorer () {
         this.weight = 0;
@@ -20,7 +19,7 @@ public class Explorer {
     }
 
     public void addTime() {
-        this.time += Math.pow(1 + (this.weight / 10), 2);
+        this.time += (1 + (this.weight / 10)) * (1 + (this.weight / 10));
     }
 
     public void collectItems(LinkedList<Item> items) {
@@ -29,7 +28,8 @@ public class Explorer {
             Item i = listIter.next();
             this.value += i.value;
             this.weight += i.weight;
-            this.items.add(i);
+            this.items.add(items.poll());
+            
         }
     }
 
