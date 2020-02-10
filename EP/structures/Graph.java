@@ -66,96 +66,102 @@ public class Graph {
         LinkedList<Vertice> queue = new LinkedList<Vertice>();
         Vertice origin = this.fetch(startCoord.get("row"), startCoord.get("col"));
         Vertice dest = this.fetch(endCoord.get("row"), endCoord.get("col"));
-
-        origin.was_visited = true;
-        queue.add(origin);
-
-        while (queue.size() != 0) {
-            origin = queue.poll();
-            explorer.Path.add(origin);
-            explorer.addTime();
-            explorer.collectItems(origin.items);
-            
-            LinkedList<Vertice> vList = this.connections.get(origin); 
-            ListIterator<Vertice> vIter = vList.listIterator();
-            int minRowDist = Math.abs(dest.row - origin.row);
-            int minColDist = Math.abs(dest.col - origin.col);
-            Vertice minV = null;
-            while (vIter.hasNext()) {
-                Vertice n = vIter.next();
-
-                if(n.equals(dest)) { // Destination was reached
-                    explorer.Path.add(n);
-                    explorer.addTime();
-                    explorer.collectItems(n.items);
-                    return;
+        try {
+            origin.was_visited = true;
+            queue.add(origin);
+    
+            while (queue.size() != 0) {
+                origin = queue.poll();
+                explorer.Path.add(origin);
+                explorer.addTime();
+                explorer.collectItems(origin.items);
+                
+                LinkedList<Vertice> vList = this.connections.get(origin); 
+                ListIterator<Vertice> vIter = vList.listIterator();
+                int minRowDist = Math.abs(dest.row - origin.row);
+                int minColDist = Math.abs(dest.col - origin.col);
+                Vertice minV = null;
+                while (vIter.hasNext()) {
+                    Vertice n = vIter.next();
+    
+                    if(n.equals(dest)) { // Destination was reached
+                        explorer.Path.add(n);
+                        explorer.addTime();
+                        explorer.collectItems(n.items);
+                        return;
+                    }
+    
+                    int rowDistance = Math.abs(n.row - dest.row);
+                    int colDistance = Math.abs(n.col - dest.col);
+    
+                    if (
+                        rowDistance <= minRowDist
+                        && colDistance <= minColDist
+                        && !n.was_visited
+                       ) {
+                        minRowDist = Math.abs(n.row - dest.row);
+                        minColDist = Math.abs(n.col - dest.col);
+                        minV = n;
+                    }
                 }
-
-                int rowDistance = Math.abs(n.row - dest.row);
-                int colDistance = Math.abs(n.col - dest.col);
-
-                if (
-                    rowDistance <= minRowDist
-                    && colDistance <= minColDist
-                    && !n.was_visited
-                   ) {
-                    minRowDist = Math.abs(n.row - dest.row);
-                    minColDist = Math.abs(n.col - dest.col);
-                    minV = n;
-                }
+                minV.was_visited = true;
+                queue.add(minV);
             }
-            minV.was_visited = true;
-            queue.add(minV);
+        } catch (Exception e) {
+            explorer.error = String.format("Couldn't find path: %s", e);
         }
     }
-    //! Still a WIP
+    //! Not fully working
     public void findMaxPath (HashMap<String, Integer> startCoord, HashMap<String, Integer> endCoord, Explorer explorer) {
         LinkedList<Vertice> queue = new LinkedList<Vertice>();
         Vertice origin = this.fetch(startCoord.get("row"), startCoord.get("col"));
         Vertice dest = this.fetch(endCoord.get("row"), endCoord.get("col"));
-        
-        origin.was_visited = true;
-        queue.add(origin);
-        while (queue.size() != 0) {
-            origin = queue.poll();
-            explorer.Path.add(origin);
-            explorer.collectItems(origin.items);
-            explorer.addTime();
-            
-            LinkedList<Vertice> vList = this.connections.get(origin); 
-            ListIterator<Vertice> i = vList.listIterator();
-            Vertice maxV = null;
-            int maxRowDist = -1;
-            int maxColDist = -1;
-            while (i.hasNext()) {
-                Vertice n = i.next();
-
-                if(n.equals(dest)) { // Destination was reached
-                    explorer.Path.add(n);
-                    explorer.addTime();
-                    explorer.collectItems(n.items);
-                    return;
+        try {
+            origin.was_visited = true;
+            queue.add(origin);
+            while (queue.size() != 0) {
+                origin = queue.poll();
+                explorer.Path.add(origin);
+                explorer.collectItems(origin.items);
+                explorer.addTime();
+                
+                LinkedList<Vertice> vList = this.connections.get(origin); 
+                ListIterator<Vertice> i = vList.listIterator();
+                Vertice maxV = null;
+                int maxRowDist = -1;
+                int maxColDist = -1;
+                while (i.hasNext()) {
+                    Vertice n = i.next();
+    
+                    if(n.equals(dest)) { // Destination was reached
+                        explorer.Path.add(n);
+                        explorer.addTime();
+                        explorer.collectItems(n.items);
+                        return;
+                    }
+    
+                    int rowDistance = Math.abs(n.row - dest.row);
+                    int colDistance = Math.abs(n.col - dest.col);
+                    if (
+                        rowDistance >= maxRowDist
+                        && colDistance >= maxColDist
+                        && !n.was_visited 
+                       ) {
+                        maxRowDist = Math.abs(n.row - dest.row);
+                        maxColDist = Math.abs(n.col - dest.col);
+                        maxV = n;
+                    }
                 }
-
-                int rowDistance = Math.abs(n.row - dest.row);
-                int colDistance = Math.abs(n.col - dest.col);
-                if (
-                    rowDistance >= maxRowDist
-                    && colDistance >= maxColDist
-                    && !n.was_visited 
-                   ) {
-                    maxRowDist = Math.abs(n.row - dest.row);
-                    maxColDist = Math.abs(n.col - dest.col);
-                    maxV = n;
-                }
+                System.out.printf("%d %d\n", maxV.row, maxV.col);
+                maxV.was_visited = true;
+                queue.add(maxV);
             }
-            System.out.printf("%d %d\n", maxV.row, maxV.col);
-            System.out.println("WALK");
-            maxV.was_visited = true;
-            queue.add(maxV);
+        } catch (Exception e) {
+            explorer.error = String.format("Couldn't find path: %s", e);
         }
     }
 
+    //! Not fully working
     public void findMostValPath (HashMap<String, Integer> startCoord, HashMap<String, Integer> endCoord, Explorer explorer, Item[] items) {
         try {
             HashMap<String, Integer> startItem = new HashMap<String, Integer>() {{
@@ -182,8 +188,7 @@ public class Graph {
     
             this.findMinPath(endItem, endCoord, explorer);
         } catch (Exception e) {
-            // System.out.println("Your input doesn't have any items");
-            System.out.println(e);
+            explorer.error = String.format("Couldn't find path: %s", e);
         }
     }
 }

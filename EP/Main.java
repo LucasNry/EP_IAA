@@ -16,6 +16,7 @@ public class Main {
         Path filePath = Paths.get(String.format("EP/resources/%s", args[0]));
         int method = Integer.parseInt(args[1]); 
         String fileString = "";
+
         try {
             fileString = new String(Files.readAllBytes(filePath));
         } catch (IOException e) {
@@ -62,24 +63,6 @@ public class Main {
             default:
                 System.out.println("Please input a search method after the maze filename");;
             }
-        HashMap<String, Integer> itemCord1 = new HashMap<String, Integer>() {{
-            put("row", 4);
-            put("col", 0);
-        }};
-        HashMap<String, Integer> itemCord2 = new HashMap<String, Integer>() {{
-            put("row", 3);
-            put("col", 2);
-        }};
-        HashMap<String, Integer> itemCord3 = new HashMap<String, Integer>() {{
-            put("row", 2);
-            put("col", 0);
-        }};
-        // maze.findMinPath(startingCoordinates, itemCord1, explorer);
-        // maze.findMinPath(itemCord1, itemCord2, explorer);
-        // maze.findMinPath(itemCord2, itemCord3, explorer);
-        // maze.findMinPath(itemCord3, endingCoordinates, explorer);
-        // maze.findMaxPath(startingCoordinates, endingCoordinates, explorer);
-        // maze.findMostValPath(startingCoordinates, endingCoordinates, explorer, items);
 
         printResults(explorer);
         
@@ -103,7 +86,6 @@ public class Main {
             for (int j = 0; j < cols; j++) {
                 Vertice v = new Vertice(i, j, Maze[i][j], items);
                 navMaze.insert(i, j, v);
-                navMaze.fetch(i, j);
                 navMaze.connections.put(v, new LinkedList<Vertice>());
             }
         }
@@ -152,6 +134,10 @@ public class Main {
         while(iList.hasNext()) {
             Item i = iList.next();
             System.out.printf("%d %d\n", i.row, i.col);
+        }
+
+        if(explorer.error.length() > 0) {
+            System.out.println(explorer.error);
         }
     }
 }

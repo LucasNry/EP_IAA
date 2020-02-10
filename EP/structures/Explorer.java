@@ -9,8 +9,10 @@ public class Explorer {
     public LinkedList<Item> items;
     public float weight, value, nOfItems;
     public double time;
+    public String error;
 
     public Explorer () {
+        this.error = "";
         this.weight = 0;
         this.value = 0;
         this.time = 0;
